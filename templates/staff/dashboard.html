@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Staff Dashboard</h2>
+  <p>Your assigned treks</p>
+</div>
+
+{% if treks %}
+<div class="row g-3">
+{% for t in treks %}
+  <div class="col-lg-6">
+    <div class="trek-card">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <h6 class="trek-title mb-0">{{ t.name }}</h6>
+        <span class="badge badge-{{ t.status|lower }}">{{ t.status }}</span>
+      </div>
+      <div class="trek-meta">
+        <div>{{ t.location }}</div>
+        <div>{{ t.start_date or 'TBD' }} — {{ t.end_date or 'TBD' }}</div>
+        <div>{{ t.duration_days }} days</div>
+        <div>{{ trek_participants.get(t.id, 0) }} registered · {{ t.available_slots }} slots left of {{ t.total_slots }}</div>
+      </div>
+      <div class="mt-2">
+        <span class="badge badge-{{ t.difficulty|lower }} me-2">{{ t.difficulty }}</span>
+        <a href="{{ url_for('staff.staff_trek_detail', tid=t.id) }}" class="btn btn-sm btn-primary-custom float-end">Manage</a>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <h5>No Treks Assigned</h5>
+  <p>The admin hasn't assigned any treks to you yet.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Add Trek{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Add New Trek</h2>
+  <p>Create a new trekking route</p>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="form-card">
+      <form method="POST" action="{{ url_for('admin.admin_add_trek') }}">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label" for="name">Trek Name</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="location">Location</label>
+            <input type="text" class="form-control" id="location" name="location" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="difficulty">Difficulty</label>
+            <select class="form-select" id="difficulty" name="difficulty" required>
+              <option value="Easy">Easy</option>
+              <option value="Moderate">Moderate</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="duration_days">Duration (days)</label>
+            <input type="number" class="form-control" id="duration_days" name="duration_days" min="1" required>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label" for="total_slots">Total Slots</label>
+            <input type="number" class="form-control" id="total_slots" name="total_slots" min="1" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="start_date">Start Date</label>
+            <input type="date" class="form-control" id="start_date" name="start_date">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="end_date">End Date</label>
+            <input type="date" class="form-control" id="end_date" name="end_date">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="price">Price (₹)</label>
+            <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" value="0">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="altitude">Altitude</label>
+            <input type="text" class="form-control" id="altitude" name="altitude" placeholder="e.g. 4,500m">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="assigned_staff_id">Assign Staff</label>
+            <select class="form-select" id="assigned_staff_id" name="assigned_staff_id">
+              <option value="">— None —</option>
+              {% for s in staff_list %}
+              <option value="{{ s.id }}">{{ s.full_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="status">Status</label>
+            <select class="form-select" id="status" name="status">
+              <option value="Pending">Pending</option>
+              <option value="Approved">Approved</option>
+              <option value="Open">Open</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label" for="description">Description</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary-custom">Create Trek</button>
+          <a href="{{ url_for('admin.admin_treks') }}" class="btn btn-outline-custom">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Manage Users</h2>
+  <p>View and manage registered trekkers</p>
+</div>
+
+<form method="GET" action="{{ url_for('admin.admin_users') }}" class="d-flex mb-3" style="max-width: 400px;">
+  <input type="text" name="q" value="{{ q }}" class="form-control me-2" placeholder="Search Users by Name, Username, or ID...">
+  <button class="btn btn-outline-custom" type="submit">Search</button>
+</form>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Joined</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+      {% for u in users %}
+      <tr>
+        <td>{{ u.id }}</td>
+        <td class="fw-semibold">{{ u.full_name }}</td>
+        <td>{{ u.username }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.phone or '—' }}</td>
+        <td>{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else '-' }}</td>
+        <td><span class="badge badge-{{ u.status }}">{{ u.status|capitalize }}</span></td>
+        <td>
+          <form method="POST" action="{{ url_for('admin.admin_toggle_user', uid=u.id) }}" class="d-inline">
+            <button class="btn btn-sm {% if u.status=='active' %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+              {% if u.status=='active' %}Blacklist{% else %}Activate{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="empty-state"><h5>No users registered</h5></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

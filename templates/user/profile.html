@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>My Profile</h2>
+  <p>Manage your account details</p>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="form-card text-center">
+      <div class="profile-avatar mx-auto mb-3">
+        {{ user.full_name[0]|upper if user.full_name else 'U' }}
+      </div>
+      <h5 class="fw-bold">{{ user.full_name }}</h5>
+      <p class="text-muted">@{{ user.username }}</p>
+      <span class="badge badge-{{ user.status }}">{{ user.status|capitalize }}</span>
+      <hr>
+      <div class="text-start" style="font-size:.9rem;">
+        <p class="mb-1"><strong>Email:</strong> {{ user.email }}</p>
+        <p class="mb-1"><strong>Phone:</strong> {{ user.phone or 'Not provided' }}</p>
+        <p class="mb-0"><strong>Joined:</strong> {{ user.created_at.strftime('%Y-%m-%d') if user.created_at else '—' }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="form-card">
+      <h5 class="fw-bold mb-3">Edit Profile</h5>
+      <form method="POST" action="{{ url_for('user.user_profile') }}">
+        <div class="mb-3">
+          <label class="form-label" for="full_name">Full Name</label>
+          <input type="text" class="form-control" id="full_name" name="full_name" value="{{ user.full_name }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="phone">Phone</label>
+          <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone or '' }}">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="bio">Bio</label>
+          <textarea class="form-control" id="bio" name="bio" rows="3">{{ user.bio or '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary-custom">Save Changes</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

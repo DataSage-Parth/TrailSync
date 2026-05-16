@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Manage Treks{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h2>Manage Treks</h2>
+    <p>Create, edit, and manage all trekking routes</p>
+  </div>
+  <a href="{{ url_for('admin.admin_add_trek') }}" class="btn btn-primary-custom">+ Add Trek</a>
+</div>
+
+<form method="GET" action="{{ url_for('admin.admin_treks') }}" class="d-flex mb-3" style="max-width: 400px;">
+  <input type="text" name="q" value="{{ q }}" class="form-control me-2" placeholder="Search by Trek Name, Location, or ID...">
+  <button class="btn btn-outline-custom" type="submit">Search</button>
+</form>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Location</th><th>Difficulty</th><th>Duration</th><th>Slots</th><th>Staff</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+      {% for t in treks %}
+      <tr>
+        <td>{{ t.id }}</td>
+        <td class="fw-semibold">{{ t.name }}</td>
+        <td>{{ t.location }}</td>
+        <td><span class="badge badge-{{ t.difficulty|lower }}">{{ t.difficulty }}</span></td>
+        <td>{{ t.duration_days }} days</td>
+        <td>{{ t.available_slots }}/{{ t.total_slots }}</td>
+        <td>{{ t.staff.full_name if t.staff else '—' }}</td>
+        <td><span class="badge badge-{{ t.status|lower }}">{{ t.status }}</span></td>
+        <td>
+          <a href="{{ url_for('admin.admin_edit_trek', tid=t.id) }}" class="btn btn-sm btn-outline-custom me-1">Edit</a>
+          <form method="POST" action="{{ url_for('admin.admin_delete_trek', tid=t.id) }}" class="d-inline"
+                onsubmit="return confirm('Delete this trek?')">
+            <button class="btn btn-sm btn-outline-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="9" class="empty-state"><h5>No treks yet</h5><p>Create your first trek to get started</p></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

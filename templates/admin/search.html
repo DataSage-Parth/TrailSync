@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Search</h2>
+  <p>Find treks, users, or staff by name or ID</p>
+</div>
+
+<div class="search-bar">
+  <form method="GET" action="{{ url_for('admin.admin_search') }}">
+    <div class="input-group">
+      <input type="text" class="form-control" name="q" value="{{ q }}" placeholder="Search by name, username, or ID..." required>
+      <button class="btn btn-primary-custom" type="submit">Search</button>
+    </div>
+  </form>
+</div>
+
+{% if q %}
+<h5 class="mt-4 mb-3">Treks ({{ results.treks|length }})</h5>
+{% if results.treks %}
+<div class="table-card mb-4">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>ID</th><th>Name</th><th>Location</th><th>Difficulty</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+      {% for t in results.treks %}
+      <tr>
+        <td>{{ t.id }}</td><td>{{ t.name }}</td><td>{{ t.location }}</td>
+        <td><span class="badge badge-{{ t.difficulty|lower }}">{{ t.difficulty }}</span></td>
+        <td><span class="badge badge-{{ t.status|lower }}">{{ t.status }}</span></td>
+        <td><a href="{{ url_for('admin.admin_edit_trek', tid=t.id) }}" class="btn btn-sm btn-outline-custom">Edit</a></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}<p class="text-muted mb-4">No treks found.</p>{% endif %}
+
+<h5 class="mb-3">Users ({{ results.users|length }})</h5>
+{% if results.users %}
+<div class="table-card mb-4">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for u in results.users %}
+      <tr><td>{{ u.id }}</td><td>{{ u.full_name }}</td><td>{{ u.username }}</td><td>{{ u.email }}</td>
+        <td><span class="badge badge-{{ u.status }}">{{ u.status|capitalize }}</span></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}<p class="text-muted mb-4">No users found.</p>{% endif %}
+
+<h5 class="mb-3">Staff ({{ results.staff|length }})</h5>
+{% if results.staff %}
+<div class="table-card mb-4">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for s in results.staff %}
+      <tr><td>{{ s.id }}</td><td>{{ s.full_name }}</td><td>{{ s.username }}</td><td>{{ s.email }}</td>
+        <td><span class="badge badge-{{ s.status }}">{{ s.status|capitalize }}</span></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% else %}<p class="text-muted">No staff found.</p>{% endif %}
+{% endif %}
+{% endblock %}

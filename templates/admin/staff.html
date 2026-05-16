@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Manage Staff{% endblock %}
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+  <div>
+    <h2>Manage Staff</h2>
+    <p>Add, view, and manage trek staff members</p>
+  </div>
+  <a href="{{ url_for('admin.admin_add_staff') }}" class="btn btn-primary-custom">+ Add Staff</a>
+</div>
+
+<form method="GET" action="{{ url_for('admin.admin_staff') }}" class="d-flex mb-3" style="max-width: 400px;">
+  <input type="text" name="q" value="{{ q }}" class="form-control me-2" placeholder="Search Staff by Name, Username, or ID...">
+  <button class="btn btn-outline-custom" type="submit">Search</button>
+</form>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Username</th><th>Email</th><th>Phone</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+      {% for s in staff %}
+      <tr>
+        <td>{{ s.id }}</td>
+        <td class="fw-semibold">{{ s.full_name }}</td>
+        <td>{{ s.username }}</td>
+        <td>{{ s.email }}</td>
+        <td>{{ s.phone or '—' }}</td>
+        <td><span class="badge badge-{{ s.status }}">{{ s.status|capitalize }}</span></td>
+        <td>
+          <form method="POST" action="{{ url_for('admin.admin_toggle_staff', sid=s.id) }}" class="d-inline">
+            <button class="btn btn-sm {% if s.status=='active' %}btn-outline-warning{% else %}btn-outline-success{% endif %}">
+              {% if s.status=='active' %}Blacklist{% else %}Activate{% endif %}
+            </button>
+          </form>
+          <form method="POST" action="{{ url_for('admin.admin_remove_staff', sid=s.id) }}" class="d-inline"
+                onsubmit="return confirm('Remove this staff member?')">
+            <button class="btn btn-sm btn-outline-danger">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="7" class="empty-state"><h5>No staff members</h5><p>Add your first staff member</p></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

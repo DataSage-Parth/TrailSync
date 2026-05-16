@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Manage Trek{% endblock %}
+{% block content %}
+<div class="page-header">
+  <a href="{{ url_for('staff.staff_dashboard') }}" class="btn btn-outline-custom btn-sm mb-2">← Back</a>
+</div>
+
+<div class="trek-detail-banner">
+  <div class="d-flex justify-content-between align-items-start">
+    <div>
+      <h3>{{ trek.name }}</h3>
+      <p class="mb-1">{{ trek.location }}</p>
+      <p class="mb-0">{{ trek.start_date or 'TBD' }} — {{ trek.end_date or 'TBD' }}</p>
+    </div>
+    <span class="badge badge-{{ trek.status|lower }} fs-6">{{ trek.status }}</span>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <div class="form-card">
+      <h6 class="fw-bold mb-3">Update Available Slots</h6>
+      <form method="POST" action="{{ url_for('staff.staff_trek_detail', tid=trek.id) }}">
+        <input type="hidden" name="action" value="update_slots">
+        <div class="mb-3">
+          <label class="form-label" for="available_slots">Available Slots</label>
+          <input type="number" class="form-control" id="available_slots" name="available_slots"
+                 value="{{ trek.available_slots }}" min="0" required>
+          <small class="text-muted">Current: {{ trek.available_slots }}/{{ trek.total_slots }}</small>
+        </div>
+        <button type="submit" class="btn btn-primary-custom">Update Slots</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="form-card">
+      <h6 class="fw-bold mb-3">Update Trek Status</h6>
+      <form method="POST" action="{{ url_for('staff.staff_trek_detail', tid=trek.id) }}">
+        <input type="hidden" name="action" value="update_status">
+        <div class="mb-3">
+          <label class="form-label" for="status">Status</label>
+          <select class="form-select" id="status" name="status">
+            {% for st in ['Pending','Approved','Open','Closed','Completed'] %}
+            <option value="{{ st }}" {% if trek.status==st %}selected{% endif %}>{{ st }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-accent">Update Status</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<h5 class="fw-bold mb-3">Registered Participants</h5>
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Booked On</th><th>Status</th></tr></thead>
+      <tbody>
+      {% for booking, user in participants %}
+      <tr>
+        <td>{{ loop.index }}</td>
+        <td class="fw-semibold">{{ user.full_name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone or '—' }}</td>
+        <td>{{ booking.booking_date.strftime('%Y-%m-%d') if booking.booking_date else '-' }}</td>
+        <td><span class="badge badge-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No participants yet</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

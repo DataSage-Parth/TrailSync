@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Admin Dashboard</h2>
+  <p>Overview of your trekking management system</p>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4 col-6">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-green"></span><span class="stat-label">Treks</span></div>
+      <div class="stat-value">{{ stats.treks }}</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-6">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-orange"></span><span class="stat-label">Users</span></div>
+      <div class="stat-value">{{ stats.users }}</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-6">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-blue"></span><span class="stat-label">Staff</span></div>
+      <div class="stat-value">{{ stats.staff }}</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-6">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-yellow"></span><span class="stat-label">Bookings</span></div>
+      <div class="stat-value">{{ stats.bookings }}</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-6">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-green"></span><span class="stat-label">Open Treks</span></div>
+      <div class="stat-value">{{ stats.open }}</div>
+    </div>
+  </div>
+  <div class="col-md-4 col-6">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-gray"></span><span class="stat-label">Completed</span></div>
+      <div class="stat-value">{{ stats.completed }}</div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="table-card">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold">Recent Bookings</h6>
+        <a href="{{ url_for('admin.admin_bookings') }}" class="btn btn-sm btn-outline-custom">View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>User</th><th>Trek</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for booking, user, trek in recent_bookings %}
+          <tr>
+            <td>{{ user.full_name }}</td>
+            <td>{{ trek.name }}</td>
+            <td>{{ booking.booking_date.strftime('%Y-%m-%d') if booking.booking_date else '-' }}</td>
+            <td><span class="badge badge-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="4" class="text-center text-muted py-4">No bookings yet</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="table-card">
+      <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 fw-bold">Recent Treks</h6>
+        <a href="{{ url_for('admin.admin_treks') }}" class="btn btn-sm btn-outline-custom">View All</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead><tr><th>Name</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for t in recent_treks %}
+          <tr>
+            <td>{{ t.name }}</td>
+            <td><span class="badge badge-{{ t.status|lower }}">{{ t.status }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="2" class="text-center text-muted py-4">No treks yet</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-1">
+  <div class="col-lg-7">
+    <div class="table-card">
+      <div class="p-3 border-bottom">
+        <h6 class="mb-0 fw-bold">Top 5 Popular Treks (by Bookings)</h6>
+      </div>
+      <div class="p-3">
+        <canvas id="popularTreksChart" height="100"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="table-card">
+      <div class="p-3 border-bottom">
+        <h6 class="mb-0 fw-bold">Booking Status Overview</h6>
+      </div>
+      <div class="p-3">
+        <canvas id="bookingStatusChart" height="150"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Top 5 Popular Treks Chart (Bar)
+  const trekLabels = {{ trek_chart_labels|safe }};
+  const trekData = {{ trek_chart_data|safe }};
+  
+  new Chart(document.getElementById('popularTreksChart'), {
+    type: 'bar',
+    data: {
+      labels: trekLabels,
+      datasets: [{
+        label: 'Total Bookings',
+        data: trekData,
+        backgroundColor: '#2e7d52',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+    }
+  });
+
+  // Booking Status Chart (Doughnut)
+  const statusData = {{ booking_status_data|safe }};
+  new Chart(document.getElementById('bookingStatusChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Booked', 'Completed', 'Cancelled'],
+      datasets: [{
+        data: statusData,
+        backgroundColor: ['#3b82f6', '#2e7d52', '#ef4444'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '70%',
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+</script>
+{% endblock %}

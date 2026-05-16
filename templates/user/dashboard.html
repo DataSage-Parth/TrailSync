@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Welcome, {{ g.user.full_name if g.user else session.get('username','') }}!</h2>
+  <p>Your trekking hub</p>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-green"></span><span class="stat-label">Total Bookings</span></div>
+      <div class="stat-value">{{ stats.total_bookings }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-orange"></span><span class="stat-label">Active</span></div>
+      <div class="stat-value">{{ stats.active }}</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="d-flex align-items-center"><span class="stat-dot dot-blue"></span><span class="stat-label">Completed</span></div>
+      <div class="stat-value">{{ stats.completed }}</div>
+    </div>
+  </div>
+</div>
+
+{% if my_bookings %}
+<h5 class="fw-bold mb-3">My Active Bookings</h5>
+<div class="row g-3 mb-4">
+{% for booking, trek in my_bookings %}
+  <div class="col-md-6 col-lg-4">
+    <div class="trek-card">
+      <h6 class="trek-title">{{ trek.name }}</h6>
+      <div class="trek-meta">
+        <div>{{ trek.location }}</div>
+        <div>{{ trek.start_date or 'TBD' }}</div>
+      </div>
+      <div class="mt-2">
+        <span class="badge badge-{{ trek.difficulty|lower }}">{{ trek.difficulty }}</span>
+        <span class="badge badge-{{ trek.status|lower }}">{{ trek.status }}</span>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+{% endif %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h5 class="fw-bold mb-0">Available Treks</h5>
+  <a href="{{ url_for('user.user_treks') }}" class="btn btn-sm btn-outline-custom">View All</a>
+</div>
+<div class="row g-3">
+{% for t in open_treks %}
+  <div class="col-md-6 col-lg-4">
+    <div class="trek-card">
+      <h6 class="trek-title">{{ t.name }}</h6>
+      <div class="trek-meta">
+        <div>{{ t.location }}</div>
+        <div>{{ t.start_date or 'TBD' }}</div>
+        <div>{{ t.duration_days }} days</div>
+        <div>{{ t.available_slots }} slots left</div>
+      </div>
+      <div class="mt-2 d-flex justify-content-between align-items-center">
+        <span class="badge badge-{{ t.difficulty|lower }}">{{ t.difficulty }}</span>
+        <a href="{{ url_for('user.user_trek_detail', tid=t.id) }}" class="btn btn-sm btn-primary-custom">View →</a>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="col-12 empty-state">
+    <h5>No open treks right now</h5>
+    <p>Check back soon for new adventures!</p>
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

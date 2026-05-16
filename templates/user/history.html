@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Trekking History{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Trekking History</h2>
+  <p>Your completed and past treks</p>
+</div>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>Trek</th><th>Location</th><th>Difficulty</th><th>Dates</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+      {% for booking, trek in history %}
+      <tr>
+        <td class="fw-semibold">{{ trek.name }}</td>
+        <td>{{ trek.location }}</td>
+        <td><span class="badge badge-{{ trek.difficulty|lower }}">{{ trek.difficulty }}</span></td>
+        <td>{{ trek.start_date or '—' }} — {{ trek.end_date or '—' }}</td>
+        <td><span class="badge badge-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="empty-state">
+        <h5>No history yet</h5>
+        <p>Your completed and cancelled treks will appear here.</p>
+      </td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

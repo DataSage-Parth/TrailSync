@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ trek.name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <a href="{{ url_for('user.user_treks') }}" class="btn btn-outline-custom btn-sm mb-2">← Back to Treks</a>
+</div>
+
+<div class="trek-detail-banner">
+  <div class="row align-items-center">
+    <div class="col-md-8">
+      <h3>{{ trek.name }}</h3>
+      <p class="mb-1">{{ trek.location }}</p>
+      <p class="mb-0">{{ trek.start_date or 'TBD' }} — {{ trek.end_date or 'TBD' }}</p>
+    </div>
+    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+      <span class="badge badge-{{ trek.status|lower }} fs-6">{{ trek.status }}</span>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="form-card">
+      <h5 class="fw-bold mb-3">Trek Details</h5>
+      <div class="row g-3">
+        <div class="col-sm-6"><strong>Difficulty:</strong> <span class="badge badge-{{ trek.difficulty|lower }}">{{ trek.difficulty }}</span></div>
+        <div class="col-sm-6"><strong>Duration:</strong> {{ trek.duration_days }} days</div>
+        <div class="col-sm-6"><strong>Available Slots:</strong> {{ trek.available_slots }} / {{ trek.total_slots }}</div>
+        {% if trek.price %}<div class="col-sm-6"><strong>Price:</strong> ₹{{ "%.0f"|format(trek.price) }}</div>{% endif %}
+        {% if trek.altitude %}<div class="col-sm-6"><strong>Altitude:</strong> {{ trek.altitude }}</div>{% endif %}
+        {% if trek.staff %}<div class="col-sm-6"><strong>Guide:</strong> {{ trek.staff.full_name }}</div>{% endif %}
+      </div>
+      {% if trek.description %}
+      <hr>
+      <h6 class="fw-bold">Description</h6>
+      <p>{{ trek.description }}</p>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-4">
+    <div class="form-card text-center">
+      {% if trek.status in ['Open', 'Approved'] and trek.available_slots > 0 and not already_booked %}
+        <h5 class="fw-bold mb-3">Book This Trek</h5>
+        <p class="text-muted">{{ trek.available_slots }} slots remaining</p>
+        <form method="POST" action="{{ url_for('user.user_book_trek', tid=trek.id) }}">
+          <button type="submit" class="btn btn-accent btn-lg w-100">Book Now</button>
+        </form>
+      {% elif already_booked %}
+        <h6 class="mt-2 fw-bold text-success">Already Booked!</h6>
+        <p class="text-muted">You have an active booking for this trek.</p>
+        <a href="{{ url_for('user.user_bookings') }}" class="btn btn-outline-custom btn-sm">View Bookings</a>
+      {% elif trek.available_slots <= 0 %}
+        <h6 class="mt-2 fw-bold text-danger">Fully Booked</h6>
+        <p class="text-muted">No slots available.</p>
+      {% else %}
+        <h6 class="mt-2 fw-bold text-muted">Not Open</h6>
+        <p>This trek is currently {{ trek.status }}.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

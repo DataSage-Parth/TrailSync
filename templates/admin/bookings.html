@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}All Bookings{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>All Bookings</h2>
+  <p>Complete booking history across all treks</p>
+</div>
+
+<form method="GET" action="{{ url_for('admin.admin_bookings') }}" class="d-flex mb-3" style="max-width: 400px;">
+  <input type="text" name="q" value="{{ q }}" class="form-control me-2" placeholder="Search Bookings by Trek, User, or ID...">
+  <button class="btn btn-outline-custom" type="submit">Search</button>
+</form>
+
+<div class="table-card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr><th>ID</th><th>User</th><th>Trek</th><th>Location</th><th>Booked On</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+      {% for booking, user, trek in bookings %}
+      <tr>
+        <td>{{ booking.id }}</td>
+        <td class="fw-semibold">{{ user.full_name }} <small class="text-muted">({{ user.username }})</small></td>
+        <td>{{ trek.name }}</td>
+        <td>{{ trek.location }}</td>
+        <td>{{ booking.booking_date.strftime('%Y-%m-%d') if booking.booking_date else '-' }}</td>
+        <td><span class="badge badge-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="6" class="empty-state"><h5>No bookings yet</h5></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

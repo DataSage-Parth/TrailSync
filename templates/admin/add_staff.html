@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Add Staff{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2>Add New Staff</h2>
+  <p>Create a new trek staff member account</p>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="form-card">
+      <form method="POST" action="{{ url_for('admin.admin_add_staff') }}">
+        <div class="mb-3">
+          <label class="form-label" for="full_name">Full Name</label>
+          <input type="text" class="form-control" id="full_name" name="full_name" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="username">Username</label>
+          <input type="text" class="form-control" id="username" name="username" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="email">Email</label>
+          <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="phone">Phone</label>
+          <input type="text" class="form-control" id="phone" name="phone">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" required minlength="4">
+        </div>
+        <div class="mb-3">
+          <label class="form-label" for="bio">Bio / Expertise</label>
+          <textarea class="form-control" id="bio" name="bio" rows="2"></textarea>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary-custom">Add Staff</button>
+          <a href="{{ url_for('admin.admin_staff') }}" class="btn btn-outline-custom">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
