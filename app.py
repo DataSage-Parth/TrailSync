@@ -1,7 +1,3 @@
-"""
-Trekking Management Application — app entry point.
-Registers blueprints and seeds the database.
-"""
 from flask import Flask, g, session
 from werkzeug.security import generate_password_hash
 from models import db, User
