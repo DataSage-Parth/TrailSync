@@ -1,6 +1,3 @@
-"""
-API blueprint — JSON endpoints for treks, users, and bookings.
-"""
 from flask import Blueprint, jsonify, request
 from models import db, Trek, User, Booking
 
