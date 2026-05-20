@@ -1,6 +1,3 @@
-"""
-User (Trekker) blueprint — dashboard, trek browsing, bookings, history, profile.
-"""
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from models import db, User, Trek, Booking
 from functools import wraps
