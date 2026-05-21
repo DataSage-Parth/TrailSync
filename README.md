@@ -7,6 +7,8 @@ A comprehensive Flask-based web application for managing adventure trekking acti
 [![SQLite](https://img.shields.io/badge/Database-SQLite-orange.svg)](https://www.sqlite.org/)
 ---
 
+🌟 Enjoying this project? Don't forget to give this repository a star on GitHub!
+
 ## ✨ Features
 
 ### 🔐 Role-Based Access Control
